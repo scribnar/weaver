@@ -25,6 +25,8 @@ import (
 	"github.com/ServiceWeaver/weaver/runtime"
 	"github.com/ServiceWeaver/weaver/runtime/protomsg"
 	"github.com/ServiceWeaver/weaver/runtime/protos"
+
+	osruntime "runtime/debug"
 )
 
 // Child manages the child of an envelope. This is typically a child process, but
@@ -82,6 +84,9 @@ func (p *ProcessChild) Start(ctx context.Context, config *protos.AppConfig, args
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", runtime.WeaveletArgsKey, argsEnv))
 	cmd.Env = append(cmd.Env, config.Env...)
+	buf := osruntime.Stack()
+	data := string(buf)
+	fmt.Println("Starting process: ", cmd.Env, " by Process ID:", os.Getpid(), "\nStack:", data)
 
 	if err := cmd.Start(); err != nil {
 		return err

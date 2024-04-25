@@ -24,6 +24,7 @@ import (
 	"net"
 	"os"
 	"reflect"
+	"runtime/debug"
 	"strings"
 	"sync"
 
@@ -146,6 +147,7 @@ type listener struct {
 // connection with an envelope.
 func NewRemoteWeavelet(ctx context.Context, regs []*codegen.Registration, bootstrap runtime.Bootstrap, opts RemoteWeaveletOptions) (*RemoteWeavelet, error) {
 	args := bootstrap.Args
+	fmt.Println("NewRemoteWeavelet: bootstrap.Args", bootstrap.Args, ",  PID:", os.Getpid())
 	if args == nil {
 		err := fmt.Errorf("missing WeaveletArgs")
 		return nil, err
@@ -912,6 +914,11 @@ func (s *server) handlers(components []string) (*call.HandlerMap, error) {
 	// Note that the components themselves may not be started, but we still
 	// register their handlers to avoid concurrency issues with on-demand
 	// handler additions.
+	fmt.Println("server.handlers: components: ", components, ",  PID:", os.Getpid())
+	fmt.Println("server.handlers:  Before the stack trace", ",  PID:", os.Getpid())
+	debug.PrintStack()
+	fmt.Println("server.handlers:  After the stack trace", ",  PID:", os.Getpid())
+
 	hm := call.NewHandlerMap()
 	for _, component := range components {
 		c, err := s.wlet.getComponent(component)

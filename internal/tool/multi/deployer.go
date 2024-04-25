@@ -24,6 +24,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"slices"
 	"sync"
 	"syscall"
@@ -310,6 +311,11 @@ func (d *deployer) startColocationGroup(g *group) error {
 	// Check if the deployer has already been stopped. The cleanup protocol
 	// requires that no further envelopes be started after the deployer
 	// has been stopped.
+	fmt.Println("startColocationGroup: ", g.name, ",  PID:", os.Getpid())
+	fmt.Println("startColocationGroup Before the stack trace", ",  PID:", os.Getpid())
+	debug.PrintStack()
+	fmt.Println("startColocationGroup After the stack trace", ",  PID:", os.Getpid())
+
 	if d.err != nil {
 		return d.err
 	}
